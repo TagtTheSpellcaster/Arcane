@@ -1,307 +1,59 @@
 <!DOCTYPE html>
-<html lang="it" class="dark h-full">
+<html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcane Compendium - TTRPG Master Tools</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        fantasy: {
-                            bg: '#0f0f13',
-                            card: '#181820',
-                            border: '#2a2a36',
-                            hover: '#22222e',
-                            crimson: '#9e1b2f',
-                            crimsonLight: '#c8233d',
-                            gold: '#d4af37',
-                            goldLight: '#f3ca40',
-                            text: '#e2e8f0',
-                            muted: '#94a3b8'
-                        }
-                    },
-                    fontFamily: {
-                        cinzel: ['Georgia', 'serif'],
-                        sans: ['Inter', 'system-ui', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
-        
-        .font-cinzel { font-family: 'Cinzel', serif; }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f0f13;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2a2a36;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #d4af37;
-        }
-
-        .gold-gradient-text {
-            background: linear-gradient(135deg, #f3ca40 0%, #d4af37 50%, #aa820a 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        @keyframes diceRoll {
-            0% { transform: rotate(0deg) scale(0.8); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
-        }
-
-        .animate-roll {
-            animation: diceRoll 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TTRPG Compendium - Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-fantasy-bg text-fantasy-text font-sans min-h-full flex flex-col selection:bg-fantasy-crimson selection:text-white">
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="brand">
+      <i class="fas fa-dragon fa-2x"></i>
+      <span class="brand-title">TTRPG Toolbox</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="dice.html"><i class="fas fa-dice-d20"></i> Dadi</a></li>
+      <li><a href="initiative.html"><i class="fas fa-list-ol"></i> Iniziativa</a></li>
+      <li><a href="names.html"><i class="fas fa-user-tag"></i> NPG</a></li>
+      <li><a href="notes.html"><i class="fas fa-book"></i> Note</a></li>
+    </ul>
+  </nav>
 
-    <!-- Header / Navbar Pulita -->
-    <header class="bg-fantasy-card border-b border-fantasy-border sticky top-0 z-40 shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <a href="index.html" class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-lg bg-fantasy-crimson/20 border border-fantasy-crimson flex items-center justify-center text-fantasy-gold shadow-md">
-                        <i class="fa-solid fa-dice-d20 text-xl animate-pulse"></i>
-                    </div>
-                    <div>
-                        <span class="font-cinzel text-xl font-bold tracking-wider gold-gradient-text block leading-none">ARCANE</span>
-                        <span class="text-[10px] tracking-widest text-fantasy-muted uppercase font-semibold">Compendio TTRPG</span>
-                    </div>
-                </a>
+  <div class="container">
+    <div class="card" style="text-align: center; padding: 3rem 1rem;">
+      <h1>Benvenuto nel Compendio per Master e Giocatori</h1>
+      <p style="color: var(--text-muted); margin-top: 0.5rem;">Seleziona un'utilità dal menu in alto per iniziare la sessione di gioco.</p>
+    </div>
 
-                <!-- Navigation Links (Desktop) -->
-                <nav class="hidden md:flex space-x-1 lg:space-x-2">
-                    <a href="index.html" class="px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-2 bg-fantasy-crimson text-white shadow">
-                        <i class="fa-solid fa-house text-xs"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="dice.html" class="px-3 py-2 rounded-md text-sm font-medium text-fantasy-muted hover:text-white hover:bg-fantasy-hover transition-all duration-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-dice text-xs"></i>
-                        <span>Lancia Dadi</span>
-                    </a>
-                    <a href="initiative.html" class="px-3 py-2 rounded-md text-sm font-medium text-fantasy-muted hover:text-white hover:bg-fantasy-hover transition-all duration-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-shield-halved text-xs"></i>
-                        <span>Iniziativa</span>
-                    </a>
-                    <a href="names.html" class="px-3 py-2 rounded-md text-sm font-medium text-fantasy-muted hover:text-white hover:bg-fantasy-hover transition-all duration-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-user-ninja text-xs"></i>
-                        <span>Generatore NPG</span>
-                    </a>
-                    <a href="notes.html" class="px-3 py-2 rounded-md text-sm font-medium text-fantasy-muted hover:text-white hover:bg-fantasy-hover transition-all duration-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-book-bookmark text-xs"></i>
-                        <span>Scratchpad DM</span>
-                    </a>
-                </nav>
-
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden flex items-center">
-                    <button onclick="toggleMobileMenu()" class="p-2 rounded-md text-fantasy-muted hover:text-white hover:bg-fantasy-hover focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden border-b border-fantasy-border bg-fantasy-card px-4 pt-2 pb-4 space-y-1">
-            <a href="index.html" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3 bg-fantasy-crimson text-white">
-                <i class="fa-solid fa-house w-5 text-center"></i> <span>Dashboard</span>
-            </a>
-            <a href="dice.html" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3 text-fantasy-muted hover:text-white hover:bg-fantasy-hover">
-                <i class="fa-solid fa-dice w-5 text-center"></i> <span>Lancia Dadi</span>
-            </a>
-            <a href="initiative.html" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3 text-fantasy-muted hover:text-white hover:bg-fantasy-hover">
-                <i class="fa-solid fa-shield-halved w-5 text-center"></i> <span>Iniziativa & Turni</span>
-            </a>
-            <a href="names.html" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3 text-fantasy-muted hover:text-white hover:bg-fantasy-hover">
-                <i class="fa-solid fa-user-ninja w-5 text-center"></i> <span>Generatore NPG</span>
-            </a>
-            <a href="notes.html" class="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-3 text-fantasy-muted hover:text-white hover:bg-fantasy-hover">
-                <i class="fa-solid fa-book-bookmark w-5 text-center"></i> <span>Scratchpad Master</span>
-            </a>
-        </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-        <!-- Hero Header -->
-        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-fantasy-card via-fantasy-card to-fantasy-hover border border-fantasy-border p-6 sm:p-10 shadow-2xl">
-            <div class="absolute -right-10 -bottom-10 opacity-10 text-fantasy-gold pointer-events-none">
-                <i class="fa-solid fa-dragon text-[240px]"></i>
-            </div>
-            <div class="relative z-10 max-w-2xl space-y-4">
-                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-fantasy-crimson/20 border border-fantasy-crimson/40 text-fantasy-crimsonLight text-xs font-semibold">
-                    <i class="fa-solid fa-sparkles"></i>
-                    <span>Compendio TTRPG Operativo</span>
-                </div>
-                <h1 class="font-cinzel text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
-                    Strumenti d'Elite per il <span class="gold-gradient-text">Dungeon Master</span>
-                </h1>
-                <p class="text-fantasy-muted text-sm sm:text-base leading-relaxed">
-                    Accedi velocemente alle utilità necessarie per le tue sessioni di gioco di ruolo. Scegli uno strumento dal menu o dalle schede qui sotto per iniziare.
-                </p>
-            </div>
-        </div>
-
-        <!-- Utilities Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Card 1: Dice -->
-            <a href="dice.html" class="group cursor-pointer bg-fantasy-card border border-fantasy-border hover:border-fantasy-gold/60 p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="w-12 h-12 rounded-lg bg-fantasy-crimson/20 border border-fantasy-crimson/40 flex items-center justify-center text-fantasy-gold group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-dice-d20 text-2xl"></i>
-                    </div>
-                    <h3 class="font-cinzel text-xl font-bold text-white group-hover:text-fantasy-gold transition-colors">Lancia Dadi</h3>
-                    <p class="text-xs text-fantasy-muted leading-relaxed">
-                        Lanci singoli e multipli, gestione modificatori, calcolo automatico di Vantaggio / Svantaggio e cronologia.
-                    </p>
-                </div>
-                <div class="mt-6 pt-4 border-t border-fantasy-border/50 flex items-center justify-between text-xs font-semibold text-fantasy-gold">
-                    <span>Apri Utilità</span>
-                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </a>
-
-            <!-- Card 2: Initiative -->
-            <a href="initiative.html" class="group cursor-pointer bg-fantasy-card border border-fantasy-border hover:border-fantasy-gold/60 p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="w-12 h-12 rounded-lg bg-fantasy-crimson/20 border border-fantasy-crimson/40 flex items-center justify-center text-fantasy-gold group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-shield-halved text-2xl"></i>
-                    </div>
-                    <h3 class="font-cinzel text-xl font-bold text-white group-hover:text-fantasy-gold transition-colors">Iniziativa & Turni</h3>
-                    <p class="text-xs text-fantasy-muted leading-relaxed">
-                        Gestisci il combattimento: ordine d'iniziativa dinamico, tracciamento HP, contatore di round e ordinamento rapido.
-                    </p>
-                </div>
-                <div class="mt-6 pt-4 border-t border-fantasy-border/50 flex items-center justify-between text-xs font-semibold text-fantasy-gold">
-                    <span>Apri Utilità</span>
-                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </a>
-
-            <!-- Card 3: Names & NPCs -->
-            <a href="names.html" class="group cursor-pointer bg-fantasy-card border border-fantasy-border hover:border-fantasy-gold/60 p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="w-12 h-12 rounded-lg bg-fantasy-crimson/20 border border-fantasy-crimson/40 flex items-center justify-center text-fantasy-gold group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-user-ninja text-2xl"></i>
-                    </div>
-                    <h3 class="font-cinzel text-xl font-bold text-white group-hover:text-fantasy-gold transition-colors">Generatore NPG</h3>
-                    <p class="text-xs text-fantasy-muted leading-relaxed">
-                        Genera all'istante nomi diviso per razze (Umani, Elfi, Nani, Orchi) e profili psicologici per NPG completi di tratti.
-                    </p>
-                </div>
-                <div class="mt-6 pt-4 border-t border-fantasy-border/50 flex items-center justify-between text-xs font-semibold text-fantasy-gold">
-                    <span>Apri Utilità</span>
-                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </a>
-
-            <!-- Card 4: DM Scratchpad -->
-            <a href="notes.html" class="group cursor-pointer bg-fantasy-card border border-fantasy-border hover:border-fantasy-gold/60 p-6 rounded-xl shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between">
-                <div class="space-y-4">
-                    <div class="w-12 h-12 rounded-lg bg-fantasy-crimson/20 border border-fantasy-crimson/40 flex items-center justify-center text-fantasy-gold group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-book-bookmark text-2xl"></i>
-                    </div>
-                    <h3 class="font-cinzel text-xl font-bold text-white group-hover:text-fantasy-gold transition-colors">Scratchpad DM</h3>
-                    <p class="text-xs text-fantasy-muted leading-relaxed">
-                        Tieni traccia delle tue idee di sessione, schede veloci, luoghi e appunti con salvataggio automatico sul browser.
-                    </p>
-                </div>
-                <div class="mt-6 pt-4 border-t border-fantasy-border/50 flex items-center justify-between text-xs font-semibold text-fantasy-gold">
-                    <span>Apri Utilità</span>
-                    <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </a>
-        </div>
-
-        <!-- Quick Stats / Session Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-            <!-- Latest DM Note Preview -->
-            <div class="bg-fantasy-card border border-fantasy-border rounded-xl p-5 shadow-md space-y-3">
-                <div class="flex items-center justify-between border-b border-fantasy-border pb-3">
-                    <h3 class="font-cinzel text-base font-bold text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-book-open text-fantasy-gold text-xs"></i>
-                        <span>Ultima Nota Master</span>
-                    </h3>
-                    <a href="notes.html" class="text-xs text-fantasy-gold hover:underline">Apri Scratchpad</a>
-                </div>
-                <div id="dash-note-preview" class="text-xs text-fantasy-muted leading-relaxed min-h-[60px] italic">
-                    Nessuna nota presente. Accedi allo Scratchpad per creare il tuo primo appunto!
-                </div>
-            </div>
-
-            <!-- Quick Dice Roller Widget -->
-            <div class="bg-fantasy-card border border-fantasy-border rounded-xl p-5 shadow-md space-y-3">
-                <div class="flex items-center justify-between border-b border-fantasy-border pb-3">
-                    <h3 class="font-cinzel text-base font-bold text-white flex items-center space-x-2">
-                        <i class="fa-solid fa-dice-d20 text-fantasy-gold text-xs"></i>
-                        <span>Lancio Rapido D20</span>
-                    </h3>
-                    <a href="dice.html" class="text-xs text-fantasy-gold hover:underline">Vedi Tutti i Dadi</a>
-                </div>
-                <div class="flex items-center justify-between">
-                    <button onclick="rollQuickD20()" class="px-4 py-2 bg-fantasy-crimson hover:bg-fantasy-crimsonLight text-white text-xs font-bold rounded-lg transition-all flex items-center space-x-2">
-                        <i class="fa-solid fa-dice"></i>
-                        <span>Lancia 1d20</span>
-                    </button>
-                    <div id="dash-d20-result" class="font-cinzel text-2xl font-black gold-gradient-text">
-                        -
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        function rollQuickD20() {
-            const res = Math.floor(Math.random() * 20) + 1;
-            const resEl = document.getElementById('dash-d20-result');
-            resEl.innerText = res;
-            resEl.classList.remove('animate-roll');
-            void resEl.offsetWidth;
-            resEl.classList.add('animate-roll');
-        }
-
-        // Load latest note from LocalStorage if exists
-        window.onload = function() {
-            const savedNotes = localStorage.getItem('ttrpg_dm_notes');
-            if (savedNotes) {
-                try {
-                    const notes = JSON.parse(savedNotes);
-                    if (notes.length > 0) {
-                        const firstNote = notes[0];
-                        document.getElementById('dash-note-preview').innerHTML = `
-                            <strong class="text-fantasy-gold not-italic block mb-1">${firstNote.title || 'Senza Titolo'}</strong>
-                            <p class="line-clamp-2 not-italic">${firstNote.content || 'Nessun contenuto...'}</p>
-                        `;
-                    }
-                } catch(e) {}
-            }
-        }
-    </script>
+    <div class="grid-4">
+      <div class="card" style="text-align: center;">
+        <i class="fas fa-dice-d20 fa-3x" style="color: var(--accent-gold); margin-bottom: 1rem;"></i>
+        <h3>Lancia Dadi</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">Lanci singoli, multipli con vantaggio e svantaggio.</p>
+        <a href="dice.html" class="btn" style="text-decoration: none; display: inline-block;">Apri</a>
+      </div>
+      <div class="card" style="text-align: center;">
+        <i class="fas fa-list-ol fa-3x" style="color: var(--accent-gold); margin-bottom: 1rem;"></i>
+        <h3>Iniziativa</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">Gestione turni di combattimento e Punti Vita.</p>
+        <a href="initiative.html" class="btn" style="text-decoration: none; display: inline-block;">Apri</a>
+      </div>
+      <div class="card" style="text-align: center;">
+        <i class="fas fa-user-tag fa-3x" style="color: var(--accent-gold); margin-bottom: 1rem;"></i>
+        <h3>Generatore NPG</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">Crea nomi, razze e tratti psicologici sul momento.</p>
+        <a href="names.html" class="btn" style="text-decoration: none; display: inline-block;">Apri</a>
+      </div>
+      <div class="card" style="text-align: center;">
+        <i class="fas fa-book fa-3x" style="color: var(--accent-gold); margin-bottom: 1rem;"></i>
+        <h3>Note DM</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">Blocco note salvato automaticamente nel browser.</p>
+        <a href="notes.html" class="btn" style="text-decoration: none; display: inline-block;">Apri</a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
