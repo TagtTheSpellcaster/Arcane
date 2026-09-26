@@ -10,6 +10,21 @@
     .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
     .name-chip { background: var(--bg-primary); border: 1px solid var(--border-gold); padding: 0.5rem; border-radius: 4px; text-align: center; color: var(--accent-gold); font-family: 'Cinzel', serif; font-weight: bold; }
     .custom-dataset-container { display: none; margin-top: 0.5rem; }
+    .file-upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-primary);
+      border: 1px dashed var(--border-gold);
+      color: var(--accent-gold);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+    }
+    .file-upload-btn:hover { background: rgba(212, 175, 55, 0.1); border-style: solid; }
   </style>
 </head>
 <body>
@@ -30,7 +45,7 @@
       <div class="card">
         <h2>Generatore Markov (Algoritmico)</h2>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">
-          Genera nomi procedurali analizzando le frequenze fonetiche dei linguaggi fantasy o da un dataset personalizzato.
+          Genera nomi procedurali analizzando le frequenze fonetiche dei linguaggi fantasy o caricando un tuo dataset in formato .txt.
         </p>
         
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -45,9 +60,14 @@
           </label>
 
           <div id="customDatasetBox" class="custom-dataset-container">
+            <label class="file-upload-btn">
+              <i class="fas fa-file-upload"></i> Carica file .txt
+              <input type="file" id="txtFileInput" accept=".txt" style="display: none;" onchange="handleFileUpload(event)">
+            </label>
+            <span id="fileNameDisplay" style="color: var(--text-muted); font-size: 0.8rem; display: block; margin-bottom: 0.5rem;"></span>
             <label>
-              Inserisci nomi di addestramento (separati da virgola o a capo):
-              <textarea id="customDatasetText" rows="4" placeholder="Esempio: Valerius, Lucius, Aurelius, Cassian, Tiberius"></textarea>
+              Elenco nomi di addestramento:
+              <textarea id="customDatasetText" rows="4" placeholder="Scegli un file .txt oppure incolla i nomi separati da virgola o a capo (es. Valerius, Lucius, Aurelius)..."></textarea>
             </label>
           </div>
 
@@ -178,6 +198,19 @@
       }
     }
 
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const text = e.target.result;
+        document.getElementById('customDatasetText').value = text;
+        document.getElementById('fileNameDisplay').innerText = `File caricato: ${file.name}`;
+      };
+      reader.readAsText(file);
+    }
+
     function generateMarkovNames() {
       const type = document.getElementById('markovDataset').value;
       const gender = document.getElementById('markovGender').value;
@@ -192,7 +225,7 @@
         const rawText = document.getElementById('customDatasetText').value;
         trainingData = rawText.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
         if (trainingData.length === 0) {
-          container.innerHTML = '<span style="color:#ff6b6b; font-size:0.85rem;">Inserisci almeno un paio di nomi nel campo personalizzato.</span>';
+          container.innerHTML = '<span style="color:#ff6b6b; font-size:0.85rem;">Inserisci i nomi nell\'area di testo o carica un file .txt valido.</span>';
           return;
         }
       } else {
