@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note DM - TTRPG</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="brand"><i class="fas fa-dragon fa-2x"></i> <span class="brand-title">TTRPG Toolbox</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="dice.html"><i class="fas fa-dice-d20"></i> Dadi</a></li>
+      <li><a href="initiative.html"><i class="fas fa-list-ol"></i> Iniziativa</a></li>
+      <li><a href="names.html"><i class="fas fa-user-tag"></i> NPG</a></li>
+      <li><a href="notes.html" class="active"><i class="fas fa-book"></i> Note</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>Blocco Note Sessione</h2>
+        <span id="saveStatus" style="color: var(--text-muted); font-size: 0.85rem;">Salvataggio automatico attivo</span>
+      </div>
+      <textarea id="dmNotes" style="min-height: 400px; resize: vertical;" placeholder="Scrivi qui gli appunti della sessione... vengono salvati automaticamente nel tuo browser!"></textarea>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('dmNotes');
+    const status = document.getElementById('saveStatus');
+
+    textarea.value = localStorage.getItem('ttrpg_dm_notes') || '';
+
+    textarea.addEventListener('input', () => {
+      localStorage.setItem('ttrpg_dm_notes', textarea.value);
+      status.innerText = 'Salvato!';
+      setTimeout(() => { status.innerText = 'Salvataggio automatico attivo'; }, 2000);
+    });
+  </script>
+</body>
+</html>
