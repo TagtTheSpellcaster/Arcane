@@ -9,6 +9,7 @@
   <style>
     .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
     .name-chip { background: var(--bg-primary); border: 1px solid var(--border-gold); padding: 0.5rem; border-radius: 4px; text-align: center; color: var(--accent-gold); font-family: 'Cinzel', serif; font-weight: bold; }
+    .custom-dataset-container { display: none; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
@@ -29,23 +30,40 @@
       <div class="card">
         <h2>Generatore Markov (Algoritmico)</h2>
         <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">
-          Genera nomi procedurali analizzando le frequenze fonetiche dei linguaggi fantasy.
+          Genera nomi procedurali analizzando le frequenze fonetiche dei linguaggi fantasy o da un dataset personalizzato.
         </p>
         
         <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           <label>
             Dataset Linguistico:
-            <select id="markovDataset">
-              <option value="elf">Elfico (AER, ITH, LOR, THAL)</option>
-              <option value="dwarf">Nanico (THOR, BAL, KHAR, DUR)</option>
-              <option value="orc">Orchesco (GROM, KRAG, UR, ZUL)</option>
+            <select id="markovDataset" onchange="toggleCustomInput()">
+              <option value="elf">Elfico</option>
+              <option value="dwarf">Nanico</option>
+              <option value="orc">Orchesco</option>
+              <option value="custom">-- Personalizzato --</option>
+            </select>
+          </label>
+
+          <div id="customDatasetBox" class="custom-dataset-container">
+            <label>
+              Inserisci nomi di addestramento (separati da virgola o a capo):
+              <textarea id="customDatasetText" rows="4" placeholder="Esempio: Valerius, Lucius, Aurelius, Cassian, Tiberius"></textarea>
+            </label>
+          </div>
+
+          <label id="genderLabel">
+            Genere:
+            <select id="markovGender">
+              <option value="male">Maschile</option>
+              <option value="female">Femminile</option>
+              <option value="neutral" selected>Neutro / Combinato</option>
             </select>
           </label>
 
           <label>
             Ordine della Catena:
             <select id="markovOrder">
-              <option value="2">2 (Alta variabilità / Più causale)</option>
+              <option value="2">2 (Alta variabilità)</option>
               <option value="3" selected>3 (Bilanciato - Consigliato)</option>
               <option value="4">4 (Molto fedele al dataset)</option>
             </select>
@@ -81,15 +99,24 @@
   </div>
 
   <script>
-    // --- DATASET PER CATENE DI MARKOV ---
+    // --- DATASET PER GENERE E RAZZA ---
     const DATASETS = {
-      elf: ["Aredhel", "Celeborn", "Elrond", "Galadriel", "Glorfindel", "Legolas", "Thranduil", "Faelar", "Caelen", "Aerendil", "Ithilial", "Loric", "Tauriel", "Silvanus", "Finwe", "Thingol", "Earendil", "Maedhros", "Fingolfin", "Eol", "Aegnor", "Amrod", "Amras", "Canthir", "Curufin"],
-      dwarf: ["Balin", "Bofur", "Bombur", "Dain", "Dis", "Dwalin", "Fili", "Gloin", "Kili", "Nori", "Oin", "Ori", "Thorin", "Thror", "Gimli", "Durin", "Magni", "Muradin", "Brann", "Thaurissan", "Baelgun", "Barim", "Brokk", "Eitri"],
-      orc: ["Grommash", "Thrall", "Garrosh", "Guldan", "Durotan", "Kilrogg", "Kargath", "Orgrim", "Brakhar", "Mugthol", "Rend", "Maim", "Zuluhed", "Gorzak", "Ugrak", "Drakthul", "Grozag", "Koragg", "Dazgar", "Nazgrel"]
+      elf: {
+        male: ["Aredhel", "Celeborn", "Elrond", "Glorfindel", "Legolas", "Thranduil", "Faelar", "Caelen", "Aerendil", "Finwe", "Thingol", "Earendil", "Maedhros", "Fingolfin", "Eol", "Aegnor", "Amrod", "Curufin"],
+        female: ["Galadriel", "Tauriel", "Luthien", "Idril", "Arwen", "Nimrodel", "Aredhel", "Celebrindal", "Finduilas", "Eowyn", "Melian", "Anaire", "Elenwe", "Nerdanel", "Earwen"]
+      },
+      dwarf: {
+        male: ["Balin", "Bofur", "Bombur", "Dain", "Dwalin", "Fili", "Gloin", "Kili", "Nori", "Oin", "Ori", "Thorin", "Thror", "Gimli", "Durin", "Magni", "Muradin", "Brann", "Brokk"],
+        female: ["Dis", "Hera", "Kari", "Dagna", "Helga", "Bera", "Thora", "Gerd", "Sif", "Elda", "Frida", "Sigrid", "Vardis", "Kizda", "Brenna"]
+      },
+      orc: {
+        male: ["Grommash", "Thrall", "Garrosh", "Guldan", "Durotan", "Kilrogg", "Kargath", "Orgrim", "Brakhar", "Mugthol", "Rend", "Maim", "Zuluhed", "Gorzak", "Ugrak", "Drakthul"],
+        female: ["Draka", "Garona", "Zaela", "Geyah", "Greatmother", "Agga", "Magra", "Sharn", "Brakka", "Kargala", "Ushruka", "Ogrona", "Vorzar"]
+      }
     };
 
     class MarkovGenerator {
-      constructor(data, order = 2) {
+      constructor(data, order = 3) {
         this.order = parseInt(order);
         this.chains = {};
         this.starts = [];
@@ -114,7 +141,7 @@
       }
 
       generate(minLength = 4, maxLength = 12) {
-        if (this.starts.length === 0) return "Err";
+        if (this.starts.length === 0) return null;
         let current = this.starts[Math.floor(Math.random() * this.starts.length)];
         let result = current;
 
@@ -137,23 +164,61 @@
       }
     }
 
+    function toggleCustomInput() {
+      const type = document.getElementById('markovDataset').value;
+      const customBox = document.getElementById('customDatasetBox');
+      const genderLabel = document.getElementById('genderLabel');
+
+      if (type === 'custom') {
+        customBox.style.display = 'block';
+        genderLabel.style.display = 'none';
+      } else {
+        customBox.style.display = 'none';
+        genderLabel.style.display = 'block';
+      }
+    }
+
     function generateMarkovNames() {
       const type = document.getElementById('markovDataset').value;
+      const gender = document.getElementById('markovGender').value;
       const order = document.getElementById('markovOrder').value;
-      const count = parseInt(document.getElementById('markovCount').value) || 5;
-      const dataset = DATASETS[type];
-      
-      const generator = new MarkovGenerator(dataset, order);
+      const count = parseInt(document.getElementById('markovCount').value) || 6;
       const container = document.getElementById('markovResults');
       container.innerHTML = '';
 
+      let trainingData = [];
+
+      if (type === 'custom') {
+        const rawText = document.getElementById('customDatasetText').value;
+        trainingData = rawText.split(/[\n,]+/).map(s => s.trim()).filter(s => s.length > 0);
+        if (trainingData.length === 0) {
+          container.innerHTML = '<span style="color:#ff6b6b; font-size:0.85rem;">Inserisci almeno un paio di nomi nel campo personalizzato.</span>';
+          return;
+        }
+      } else {
+        const raceData = DATASETS[type];
+        if (gender === 'male') {
+          trainingData = raceData.male;
+        } else if (gender === 'female') {
+          trainingData = raceData.female;
+        } else {
+          trainingData = [...raceData.male, ...raceData.female];
+        }
+      }
+
+      const generator = new MarkovGenerator(trainingData, order);
       const generated = new Set();
       let attempts = 0;
 
-      while (generated.size < count && attempts < 150) {
+      while (generated.size < count && attempts < 200) {
         const name = generator.generate();
-        if (name.length >= 3 && name !== "Err") generated.add(name);
+        if (name && name.length >= 3) generated.add(name);
         attempts++;
+      }
+
+      if (generated.size === 0) {
+        container.innerHTML = '<span style="color:#ff6b6b; font-size:0.85rem;">Dataset troppo piccolo per l\'ordine selezionato. Aggiungi più nomi o riduci l\'ordine.</span>';
+        return;
       }
 
       generated.forEach(name => {
