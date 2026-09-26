@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generatore NPG - TTRPG</title>
+  <title>Generatore NPG & Nomi Markov - TTRPG</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .results-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 1rem; }
+    .name-chip { background: var(--bg-primary); border: 1px solid var(--border-gold); padding: 0.5rem; border-radius: 4px; text-align: center; color: var(--accent-gold); font-family: 'Cinzel', serif; font-weight: bold; }
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -20,27 +24,152 @@
   </nav>
 
   <div class="container">
-    <div class="card" style="max-width: 600px; margin: 0 auto;">
-      <h2>Generatore Casuale NPG</h2>
-      <button class="btn" style="width: 100%; margin: 1rem 0;" onclick="generateNpc()">Genera Personaggio</button>
+    <div class="grid-2">
+      <!-- Generatore Procedurale Markov -->
+      <div class="card">
+        <h2>Generatore Markov (Algoritmico)</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">
+          Genera nomi procedurali analizzando le frequenze fonetiche dei linguaggi fantasy.
+        </p>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <label>
+            Dataset Linguistico:
+            <select id="markovDataset">
+              <option value="elf">Elfico (AER, ITH, LOR, THAL)</option>
+              <option value="dwarf">Nanico (THOR, BAL, KHAR, DUR)</option>
+              <option value="orc">Orchesco (GROM, KRAG, UR, ZUL)</option>
+            </select>
+          </label>
 
-      <div id="npcCard" style="display: none; background: var(--bg-primary); border: 1px solid var(--border-gold); padding: 1.5rem; border-radius: 6px;">
-        <h3 id="npcName" style="color: var(--accent-gold); font-size: 1.5rem;"></h3>
-        <p style="color: var(--text-muted); font-style: italic;" id="npcRaceClass"></p>
-        <hr style="border-color: var(--border-dark); margin: 1rem 0;">
-        <p><strong>Personalità:</strong> <span id="npcTrait"></span></p>
-        <p><strong>Segno Particolare:</strong> <span id="npcLook"></span></p>
-        <p><strong>Obiettivo:</strong> <span id="npcGoal"></span></p>
+          <label>
+            Ordine della Catena:
+            <select id="markovOrder">
+              <option value="2">2 (Alta variabilità / Più causale)</option>
+              <option value="3" selected>3 (Bilanciato - Consigliato)</option>
+              <option value="4">4 (Molto fedele al dataset)</option>
+            </select>
+          </label>
+
+          <label>
+            Quantità da generare:
+            <input type="number" id="markovCount" value="6" min="1" max="20">
+          </label>
+
+          <button class="btn" onclick="generateMarkovNames()">Genera con Markov</button>
+        </div>
+
+        <div id="markovResults" class="results-grid"></div>
+      </div>
+
+      <!-- Generatore NPG Completo -->
+      <div class="card">
+        <h2>Scheda NPG Rapida</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0.5rem 0 1rem 0;">Crea al volo un personaggio con razza, ruolo e tratti psicologici.</p>
+        <button class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="generateNpc()">Genera Scheda NPG</button>
+
+        <div id="npcCard" style="display: none; background: var(--bg-primary); border: 1px solid var(--border-gold); padding: 1.25rem; border-radius: 6px;">
+          <h3 id="npcName" style="color: var(--accent-gold); font-size: 1.4rem;"></h3>
+          <p style="color: var(--text-muted); font-style: italic;" id="npcRaceClass"></p>
+          <hr style="border-color: var(--border-dark); margin: 0.75rem 0;">
+          <p><strong>Personalità:</strong> <span id="npcTrait"></span></p>
+          <p><strong>Segno Particolare:</strong> <span id="npcLook"></span></p>
+          <p><strong>Obiettivo:</strong> <span id="npcGoal"></span></p>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    // --- DATASET PER CATENE DI MARKOV ---
+    const DATASETS = {
+      elf: ["Aredhel", "Celeborn", "Elrond", "Galadriel", "Glorfindel", "Legolas", "Thranduil", "Faelar", "Caelen", "Aerendil", "Ithilial", "Loric", "Tauriel", "Silvanus", "Finwe", "Thingol", "Earendil", "Maedhros", "Fingolfin", "Eol", "Aegnor", "Amrod", "Amras", "Canthir", "Curufin"],
+      dwarf: ["Balin", "Bofur", "Bombur", "Dain", "Dis", "Dwalin", "Fili", "Gloin", "Kili", "Nori", "Oin", "Ori", "Thorin", "Thror", "Gimli", "Durin", "Magni", "Muradin", "Brann", "Thaurissan", "Baelgun", "Barim", "Brokk", "Eitri"],
+      orc: ["Grommash", "Thrall", "Garrosh", "Guldan", "Durotan", "Kilrogg", "Kargath", "Orgrim", "Brakhar", "Mugthol", "Rend", "Maim", "Zuluhed", "Gorzak", "Ugrak", "Drakthul", "Grozag", "Koragg", "Dazgar", "Nazgrel"]
+    };
+
+    class MarkovGenerator {
+      constructor(data, order = 2) {
+        this.order = parseInt(order);
+        this.chains = {};
+        this.starts = [];
+        this.train(data);
+      }
+
+      train(data) {
+        data.forEach(word => {
+          const w = word.trim();
+          if (w.length <= this.order) return;
+          
+          this.starts.push(w.substring(0, this.order));
+          
+          for (let i = 0; i <= w.length - this.order; i++) {
+            const gram = w.substring(i, i + this.order);
+            const nextChar = w[i + this.order] || null;
+
+            if (!this.chains[gram]) this.chains[gram] = [];
+            this.chains[gram].push(nextChar);
+          }
+        });
+      }
+
+      generate(minLength = 4, maxLength = 12) {
+        if (this.starts.length === 0) return "Err";
+        let current = this.starts[Math.floor(Math.random() * this.starts.length)];
+        let result = current;
+
+        while (result.length < maxLength) {
+          const gram = result.slice(-this.order);
+          const possibilities = this.chains[gram];
+
+          if (!possibilities || possibilities.length === 0) break;
+
+          const next = possibilities[Math.floor(Math.random() * possibilities.length)];
+          if (next === null) {
+            if (result.length >= minLength) break;
+            else continue;
+          }
+
+          result += next;
+        }
+
+        return result.charAt(0).toUpperCase() + result.slice(1).toLowerCase();
+      }
+    }
+
+    function generateMarkovNames() {
+      const type = document.getElementById('markovDataset').value;
+      const order = document.getElementById('markovOrder').value;
+      const count = parseInt(document.getElementById('markovCount').value) || 5;
+      const dataset = DATASETS[type];
+      
+      const generator = new MarkovGenerator(dataset, order);
+      const container = document.getElementById('markovResults');
+      container.innerHTML = '';
+
+      const generated = new Set();
+      let attempts = 0;
+
+      while (generated.size < count && attempts < 150) {
+        const name = generator.generate();
+        if (name.length >= 3 && name !== "Err") generated.add(name);
+        attempts++;
+      }
+
+      generated.forEach(name => {
+        const chip = document.createElement('div');
+        chip.className = 'name-chip';
+        chip.innerText = name;
+        container.appendChild(chip);
+      });
+    }
+
+    // --- SCHEDA NPG RAPIDA ---
     const firstNames = ["Valerius", "Eldrin", "Garrick", "Lyra", "Mireia", "Thorne", "Kaelen", "Brak", "Zehra"];
     const lastNames = ["Ironfist", "Shadowweaver", "Brightwood", "Stormcaller", "Ravencrest", "Bloodaxe"];
     const races = ["Umano", "Elfo", "Nano", "Halfling", "Tiefling", "Orco"];
     const jobs = ["Mercante", "Guardia", "Fabbro", "Nobile", "Locandiere", "Mercenario", "Mago vagabondo"];
-    const traits = ["Cauto e sospettoso", "Estremamente allegro", "Sempre distratto", "Molto arrogante", "Misterioso e lacónico"];
+    const traits = ["Cauto e sospettoso", "Estremamente allegro", "Sempre distratto", "Molto arrogante", "Misterioso e laconico"];
     const looks = ["Cicatrice sul volto", "Occhi di colore diverso", "Veste elegantissima", "Accento straniero", "Tic nervoso alle mani"];
     const goals = ["Cerca un parente scomparso", "Deve ripagare un grosso debito", "Vuole vendere un artefatto", "Cerca protezione"];
 
@@ -58,6 +187,8 @@
 
       document.getElementById('npcCard').style.display = 'block';
     }
+
+    generateMarkovNames();
   </script>
 </body>
 </html>
